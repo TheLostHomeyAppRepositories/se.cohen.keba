@@ -1,0 +1,48 @@
+<script type="application/javascript">
+
+    Homey.setTitle(__('pair.title'));
+
+    Homey.emit('get_pairing_error', {})
+        .then(function (pairingError) {
+            $('#pairing-error').html(pairingError);
+        });
+
+    function pairDevice() {
+        Homey.showLoadingOverlay()
+
+        let settings = {
+            ip: $('#ipfield').val(),
+            port: $('#portfield').val()
+        }
+
+        Homey.emit('set_manual_device', settings).then((result) => {
+            Homey.createDevice(result)
+                .then(function (result) {
+                    Homey.done();
+                })
+                .catch(function (error) {
+                    Homey.hideLoadingOverlay()
+                    Homey.alert(error);
+                });
+            })
+            .catch(error => {
+                Homey.hideLoadingOverlay()
+                Homey.alert(error.message);
+            });
+    }
+</script>
+
+<p data-i18n="pair.intro">
+</p>
+<p data-i18n="pair.help">
+</p>
+
+<span id='pairing-error'></span>
+
+<span data-i18n="pair.ip"></span>: <input type="text" id="ipfield" value="192.168.10.193" />
+<br><br>
+
+<span data-i18n="pair.port"></span>: <input type="text" id="portfield" value="7090" />
+<br><br>
+
+<button class="button" onclick="pairDevice()" data-i18n="pair.button" />

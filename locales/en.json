@@ -1,0 +1,10 @@
+{
+    "pair": {
+        "title": "Pair Keba Charger",
+        "intro": "Your box could not be found automatically, to add your Keba P30 or P20 (x or c-series), you first need to make sure it is included in your local network and activated the UDP funcionality",
+        "help": "Enter IP address to the box and port number, deafult is 7090",
+        "ip": "IP address",
+        "port": "Port",
+        "button": "Pair now"
+      }
+}

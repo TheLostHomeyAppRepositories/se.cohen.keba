@@ -1,0 +1,10 @@
+{
+    "pair": {
+        "title": "Parkoppla med Keba Laddbox",
+        "intro": "Det gick inte att hitta din box med automatik, för att koppla upp mot din  P30 eller P20 (x eller c-series), så måste du först ha satt upp UDP funktionaliteten och kopplat in den på ditt lokala nätverk",
+        "help": "Ange IP adress och port till din box, standard är 7090",
+        "ip": "IP adress",
+        "port": "Port",
+        "button": "Parkoppla"
+      }
+}
