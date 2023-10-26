@@ -22,10 +22,7 @@ class MyDriver {
     }
 
     let kebaApi = new api.KebaApi(settings);
-    kebaApi.getInfo()
-      .then(result => {
-        console.log('-- Success --')
-        console.log(result);
+    
 
        
 
@@ -50,11 +47,7 @@ class MyDriver {
             console.log('-- Error --')
             console.log(error);
           });
-      })
-      .catch((error) => {
-        console.log('-- Error --')
-        console.log(error);
-      });
+      
 
 
 
