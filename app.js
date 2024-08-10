@@ -21,14 +21,15 @@ class KebaApp extends Homey.App {
     if (index === -1) 
     {
       currentDevices.push({ id: device.getData().id, device: device });
-      this.log('Devices Registered: ' + device.getName())
+      this.log('Devices Registered: ' + device.getName() + ' - ' + device.getData().id)
     }
     this.log('Number of devices: ' + currentDevices.length);
   }
 
+
   removeCurrentDevices(device) {
     currentDevices = currentDevices.filter(item => item.id !== device.getData().id)
-    this.log('Devices Removed: ' + device.getName())
+    this.log('Devices Removed: ' + device.getName() + ' - ' + device.getData().id)
     this.log('Number of devices: ' + currentDevices.length);
   }
 
@@ -58,19 +59,27 @@ class KebaApp extends Homey.App {
       if (isJsonString(packet)) {
         let jsonPacket = JSON.parse(packet)
         const result = currentDevices.find(d => d.id === jsonPacket.Serial);
-        switch (jsonPacket.ID) {
-          case '1':
-            console.log('APP.JS: Recieved message for report 1, not supported');
-            break;
-          case '2':
-            result.device.getReport2(jsonPacket)
-            break;
-          case '3':
-            result.device.getReport3(jsonPacket)
-            break;
-          default:
-            console.log('APP.JS: Recieved unknown message: ' + packet);
-            break;
+        try {
+          switch (jsonPacket.ID) {
+            case '1':
+              console.log('APP.JS: Recieved message for report 1, not supported');
+              break;
+            case '2':
+              result.device.getReport2(jsonPacket) // Crash....
+              // TypeError: Cannot read properties of undefined (reading 'device')
+              // at Socket.<anonymous> (/app/app.js:66:20)
+              // at Socket.emit (node:events:517:28)
+              // at UDP.onMessage [as onmessage] (node:dgram:942:8)
+              break;
+            case '3':
+              result.device.getReport3(jsonPacket)
+              break;
+            default:
+              console.log('APP.JS: Recieved unknown message: ' + packet);
+              break;
+          }
+        } catch (error) {
+          console.log('APP.JS: unexcpected error, message: ' + error);
         }
       }
       else {

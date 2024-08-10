@@ -21,10 +21,7 @@ class MyDriver {
       'port': '7090'
     }
 
-    let kebaApi = new api.KebaApi(settings);
-    
-
-       
+    let kebaApi = new api.KebaApi(settings);     
 
         kebaApi.getReport1()
           .then(result => {

@@ -21,39 +21,44 @@ class KebaP30Driver extends Driver {
         this.log('[onPair] In pairingDevice not null: ', pairingDevice);
         return [pairingDevice];
       }
-      const discoveryResults = discoveryStrategy.getDiscoveryResults();
-      let devices = await Promise.all(Object.values(discoveryResults)
-        .map(async (discoveryResult) => {
-          try {
-            this.log('[onPair] Discovered the following results: ', discoveryResult.address);
-            let settings = {
-              ip: discoveryResult.address,
-              port: defaultPort
+      try {
+        const discoveryResults = discoveryStrategy.getDiscoveryResults();
+        this.log(discoveryResults);
+        let devices = await Promise.all(Object.values(discoveryResults)
+          .map(async (discoveryResult) => {
+            try {
+              this.log('[onPair] Discovered the following results: ', discoveryResult.address);
+              let settings = {
+                ip: discoveryResult.address,
+                port: defaultPort
+              }
+              let kebaApi = new api.KebaApi(settings);
+              const extraData = await kebaApi.getReport1()
+              return this.GetDeviceData(extraData, discoveryResult.address, defaultPort, true);
+            } catch (err) {
+              this.error('Error: status of discovered device: ', discoveryResult.id, err);
+              pairingError = this.homey.__('no_devices_found', err);
+              return [];
             }
-            let kebaApi = new api.KebaApi(settings);
-            const extraData = await kebaApi.getReport1()
-            return this.GetDeviceData(extraData, discoveryResult.address, defaultPort, true);
-          } catch (err) {
-            this.error('Error: status of discovered device: ', discoveryResult.id, err);
-            pairingError = this.homey.__('no_devices_found', err);
-            return [];
-          }
-        }));
-      this.log('-- Found Devices --')
-      this.log(devices)
-      let current = this.getDevices();
-      this.log('-- Current Devices --')
-      this.log(current)
-      current.forEach(c => {
-        let curId = c.getData().id;
-        this.log('Current Id: ' + curId);
-        devices = devices.filter(function (item) {
-          return item.data.id !== curId
-        })
-      });
-      if (devices.length > 0) {
-        this.log('[onPair] Devices found: ', devices);
-        return devices;
+          }));
+        this.log('-- Found Devices --')
+        this.log(devices)
+        let current = this.getDevices();
+        this.log('-- Current Devices --')
+        this.log(current)
+        current.forEach(c => {
+          let curId = c.getData().id;
+          this.log('Current Id: ' + curId);
+          devices = devices.filter(function (item) {
+            return item.data.id !== curId
+          })
+        });
+        if (devices.length > 0) {
+          this.log('[onPair] Devices found: ', devices);
+          return devices;
+        }
+      } catch (error) {
+        pairingError = error;
       }
       this.log('[onPair] No device found. Start manual adding with message: ', pairingError);
       session.showView('manual_pairing');

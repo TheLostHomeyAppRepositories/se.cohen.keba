@@ -152,6 +152,8 @@ class KebaP30Device extends Device {
   }
 
   async onSettings({ oldSettings, newSettings, changedKeys }) {
+    this.homey.app.removeCurrentDevices(this);
+    this.homey.app.addCurrentDevices(this);
     this.log('KebaP30Device settings where changed');
   }
 
